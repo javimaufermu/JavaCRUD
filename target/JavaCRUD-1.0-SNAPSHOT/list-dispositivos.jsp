@@ -3,7 +3,7 @@
     Created on : 5/03/2022, 5:19:36 p. m.
     Author     : Javier Fernandez
 --%>
-
+<jsp:include page="validar.jsp" />
 <%@ page language="java" contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -29,6 +29,7 @@
             <!-- <div class="alert alert-success" *ngIf='message'>{{message}}</div> -->
             <div class="container">
                 <h3 class="text-center">Lista de Dispositivos</h3>
+                <a href="cerrarSesion">Cerrar sesión</a>
                 <hr>
                 <div class="container text-left">
                     <a href="<%=request.getContextPath()%>/new" class="btn btn-success">Nuevo Dispositivo</a>

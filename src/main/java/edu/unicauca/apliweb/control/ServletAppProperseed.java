@@ -16,6 +16,7 @@ import edu.unicauca.apliweb.persistence.jpa.exceptions.NonexistentEntityExceptio
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -27,6 +28,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -38,6 +40,8 @@ public class ServletAppProperseed extends HttpServlet {
     private UsuarioJpaController usuarioJPA;
     private DispositivoJpaController dispositivoJPA;
     private RangoParametrosJpaController rangoJPA;
+    private Usuario usuario;
+    //private List<Dispositivo> listaDispositivos;
     private final static String PU = "edu.unicauca.apliweb_JavaCRUD_war_1.0-SNAPSHOTPU";
 
     @Override
@@ -91,6 +95,12 @@ public class ServletAppProperseed extends HttpServlet {
                 case "/update": //Ejecuta la edición de un cliente de la BD
                     updateDispositivo(request, response);
                     break;
+                case "/usuario": //Ejecuta la edición de un cliente de la BD
+                    iniciarSesion(request, response);
+                    break;
+                case "/cerrarSesion": //Ejecuta la edición de un cliente de la BD
+                    cerrarSesion(request, response);
+                    break;
                 default:
                     listDispositivos(request, response);
                     break;
@@ -100,12 +110,70 @@ public class ServletAppProperseed extends HttpServlet {
         }
     }
 
+    private void iniciarSesion(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String nombre = request.getParameter("nombre");
+        String clave = request.getParameter("clave");
+
+        List<Usuario> listaUsuarios = usuarioJPA.findUsuarioEntities();
+        int k = 0;
+        usuario = null;
+        for (int i = 0; i < listaUsuarios.size(); i++) {
+            if (listaUsuarios.get(i).getUsuario().equals(nombre)) {
+                k = 1;
+                if (listaUsuarios.get(i).getContraseña().equals(clave)) {
+                    k = 2;
+                    usuario = listaUsuarios.get(i);
+                }
+            }
+        }
+
+        if (usuario == null) {
+            request.setAttribute("mensaje", "Error nombre de usuario");
+            request.getRequestDispatcher("index.jsp").forward(request, response);
+        } else {
+            HttpSession sesion = request.getSession();
+            System.err.println("CONTRASEÑA:" + usuario.getContraseña());
+            sesion.setAttribute("usuario", usuario);
+            //RequestDispatcher dispatcher = request.getRequestDispatcher("list-dispositivos.jsp");
+            //dispatcher.forward(request, response);
+            response.sendRedirect("list");
+        }
+        /*if (k == 0) {
+			request.setAttribute("mensaje", "Error nombre de usuario");
+			request.getRequestDispatcher("index.jsp").forward(request, response);
+		} else {
+                    if (k==1) {
+                        request.setAttribute("mensaje", "Error contraseña");
+			request.getRequestDispatcher("index.jsp").forward(request, response);
+                    }
+                    else{
+			HttpSession sesion = request.getSession();
+			sesion.setAttribute("usuario", usuario);
+			response.sendRedirect("principal.jsp");
+                    }
+		}*/
+    }
+
+    private void cerrarSesion(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        HttpSession sesion = request.getSession();
+        sesion.invalidate();
+        request.setAttribute("mensaje", "Iniciar sesión");
+        request.getRequestDispatcher("index.jsp").forward(request, response);
+    }
+
     private void listDispositivos(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, IOException, ServletException {
-        List<Dispositivo> listaDispositivos = dispositivoJPA.findDispositivoEntities();
-        
+        List<Dispositivo> listaDispositivosTotal = dispositivoJPA.findDispositivoEntities();
+        List<Dispositivo> listaDispositivos = new ArrayList<Dispositivo>();
+        System.err.println("ID usu: " + usuario.getId());
+        for (int i = 0; i < listaDispositivosTotal.size(); i++) {
+            if (listaDispositivosTotal.get(i).getIdusuario().getId()==usuario.getId()) {                
+                Dispositivo nDisp = listaDispositivosTotal.get(i);
+                System.out.println("Entró, id_disp=" + nDisp.getId() + "nombre: " + nDisp.getNombre());
+                listaDispositivos.add(nDisp);
+            }
+        }
         request.setAttribute("listDispositivos", listaDispositivos);
-        
 
         RequestDispatcher dispatcher = request.getRequestDispatcher("list-dispositivos.jsp");
 
@@ -118,7 +186,7 @@ public class ServletAppProperseed extends HttpServlet {
         RequestDispatcher dispatcher = request.getRequestDispatcher("dispositivo-form.jsp");
         List<RangoParametros> listaRangos = rangoJPA.findRangoParametrosEntities();
         request.setAttribute("listRangos", listaRangos);
-            //request.setAttribute("idRango", existingDispositivo.getIdrango().getId());
+        //request.setAttribute("idRango", existingDispositivo.getIdrango().getId());
         dispatcher.forward(request, response);
     }
 //muestra el formulario para editar un usuario
@@ -182,7 +250,7 @@ public class ServletAppProperseed extends HttpServlet {
         int id_rango = Integer.parseInt(request.getParameter("rango"));
 //crea un objeto vacío y lo llena con los datos del cliente
         //Dispositivo ds = new Dispositivo();
-        Dispositivo ds = dispositivoJPA.findDispositivo(id);        
+        Dispositivo ds = dispositivoJPA.findDispositivo(id);
         RangoParametros rango = rangoJPA.findRangoParametros(id_rango);
         //ds.setId(id_dispositivo);
         ds.setNombre(nombre);
