@@ -3,7 +3,7 @@
     Created on : 5/03/2022, 5:25:03 p. m.
     Author     : Javier Fernandez
 --%>
-
+<jsp:include page="validar.jsp" />
 <%@ page language="java" contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -15,12 +15,12 @@
     </head>
     <body>
         <header>
-            <nav class="navbar navbar-expand-md navbar-dark" style="background-color: tomato">
+            <nav class="navbar navbar-expand-md navbar-dark bg-primary">
                 <div>
                     <a href="https://www.unicauca.edu.co" class="navbar-brand"> Aplicación Ejemplo Apliweb </a>
                 </div>
                 <ul class="navbar-nav">
-                    <li><a href="<%=request.getContextPath()%>/list" class="nav-link">Lista Dispositivos</a></li>
+                    <li><a href="<%=request.getContextPath()%>/list" class="nav-link" style="color: white;">Lista Dispositivos</a></li>
                 </ul>
             </nav>
         </header>

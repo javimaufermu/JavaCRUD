@@ -42,6 +42,7 @@ public class ServletAppProperseed extends HttpServlet {
     private RangoParametrosJpaController rangoJPA;
     private Usuario usuario;
     //private List<Dispositivo> listaDispositivos;
+    private HttpSession sesion;
     private final static String PU = "edu.unicauca.apliweb_JavaCRUD_war_1.0-SNAPSHOTPU";
 
     @Override
@@ -127,7 +128,7 @@ public class ServletAppProperseed extends HttpServlet {
             }
         }
 
-        if (usuario == null) {
+        /*if (usuario == null) {
             request.setAttribute("mensaje", "Error nombre de usuario");
             request.getRequestDispatcher("index.jsp").forward(request, response);
         } else {
@@ -137,27 +138,29 @@ public class ServletAppProperseed extends HttpServlet {
             //RequestDispatcher dispatcher = request.getRequestDispatcher("list-dispositivos.jsp");
             //dispatcher.forward(request, response);
             response.sendRedirect("list");
+        }*/
+        if (k == 0) {
+            request.setAttribute("mensaje", "Error nombre de usuario");
+            request.getRequestDispatcher("index.jsp").forward(request, response);
+        } else {
+            if (k == 1) {
+                request.setAttribute("mensaje", "Error contraseña");
+                request.getRequestDispatcher("index.jsp").forward(request, response);
+            } else {
+                sesion = request.getSession();
+                System.err.println("CONTRASEÑA:" + usuario.getContraseña());
+                sesion.setAttribute("usuario", usuario);
+                //RequestDispatcher dispatcher = request.getRequestDispatcher("list-dispositivos.jsp");
+                //dispatcher.forward(request, response);
+                response.sendRedirect("list");
+            }
         }
-        /*if (k == 0) {
-			request.setAttribute("mensaje", "Error nombre de usuario");
-			request.getRequestDispatcher("index.jsp").forward(request, response);
-		} else {
-                    if (k==1) {
-                        request.setAttribute("mensaje", "Error contraseña");
-			request.getRequestDispatcher("index.jsp").forward(request, response);
-                    }
-                    else{
-			HttpSession sesion = request.getSession();
-			sesion.setAttribute("usuario", usuario);
-			response.sendRedirect("principal.jsp");
-                    }
-		}*/
     }
 
     private void cerrarSesion(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession sesion = request.getSession();
         sesion.invalidate();
-        request.setAttribute("mensaje", "Iniciar sesión");
+        request.setAttribute("mensaje", "");
         request.getRequestDispatcher("index.jsp").forward(request, response);
     }
 
@@ -165,11 +168,12 @@ public class ServletAppProperseed extends HttpServlet {
             throws SQLException, IOException, ServletException {
         List<Dispositivo> listaDispositivosTotal = dispositivoJPA.findDispositivoEntities();
         List<Dispositivo> listaDispositivos = new ArrayList<Dispositivo>();
-        System.err.println("ID usu: " + usuario.getId());
+        //System.err.println("ID usu: " + usuario.getId());
+        //request.setAttribute("usuario", usuario);
         for (int i = 0; i < listaDispositivosTotal.size(); i++) {
-            if (listaDispositivosTotal.get(i).getIdusuario().getId()==usuario.getId()) {                
+            if (listaDispositivosTotal.get(i).getIdusuario().getId() == usuario.getId()) {
                 Dispositivo nDisp = listaDispositivosTotal.get(i);
-                System.out.println("Entró, id_disp=" + nDisp.getId() + "nombre: " + nDisp.getNombre());
+                //System.out.println("Entró, id_disp=" + nDisp.getId() + "nombre: " + nDisp.getNombre());
                 listaDispositivos.add(nDisp);
             }
         }
@@ -224,7 +228,7 @@ public class ServletAppProperseed extends HttpServlet {
 //crea un objeto de tipo Clients vacío y lo llena con los datos obtenidos 
         Dispositivo ds = new Dispositivo();
         RangoParametros rango = rangoJPA.findRangoParametros(id_rango);
-        Usuario usuario = usuarioJPA.findUsuario(4);
+        //Usuario usuario = usuarioJPA.findUsuario(4);
         ds.setNombre(nombre);
         ds.setEstado(estado);
         ds.setLatitud(latitud);
@@ -232,7 +236,19 @@ public class ServletAppProperseed extends HttpServlet {
         ds.setIdrango(rango);
         ds.setIdusuario(usuario);
 //Crea el cliente utilizando el objeto controlador JPA
-        dispositivoJPA.create(ds);
+        try {
+            dispositivoJPA.create(ds);
+            if (sesion != null) {
+                sesion.setAttribute("mss_color", "success");
+                sesion.setAttribute("consulta", "Dispositivo Agregado");
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(ServletAppProperseed.class.getName()).log(Level.SEVERE, null, ex);
+            if (sesion != null) {
+                sesion.setAttribute("mss_color", "danger");
+                sesion.setAttribute("consulta", "Error al agregar dispositivo");
+            }
+        }
 //solicita al Servlet que muestre la página actualizada con la lista de clientes 
         response.sendRedirect("list");
     }
@@ -261,8 +277,16 @@ public class ServletAppProperseed extends HttpServlet {
         try {
 //Edita el cliente en la BD
             dispositivoJPA.edit(ds);
+            if (sesion != null) {
+                sesion.setAttribute("mss_color", "success");
+                sesion.setAttribute("consulta", "Dispositivo Actualizado");
+            }
         } catch (Exception ex) {
             Logger.getLogger(ServletAppProperseed.class.getName()).log(Level.SEVERE, null, ex);
+            if (sesion != null) {
+                sesion.setAttribute("mss_color", "danger");
+                sesion.setAttribute("consulta", "Error al actualizar dispositivo");
+            }
         }
         response.sendRedirect("list");
     }
@@ -275,8 +299,16 @@ public class ServletAppProperseed extends HttpServlet {
         try {
 //Elimina el cliente con el id indicado
             dispositivoJPA.destroy(id);
+            if (sesion != null) {
+                sesion.setAttribute("mss_color", "success");
+                sesion.setAttribute("consulta", "Dispositivo Eliminado");
+            }
         } catch (NonexistentEntityException ex) {
             Logger.getLogger(ServletAppProperseed.class.getName()).log(Level.SEVERE, null, ex);
+            if (sesion != null) {
+                sesion.setAttribute("mss_color", "danger");
+                sesion.setAttribute("consulta", "Error al eliminar dispositivo");
+            }
         }
         response.sendRedirect("list");
     }

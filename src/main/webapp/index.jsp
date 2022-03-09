@@ -19,6 +19,22 @@
         <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
         <style>
+            *{
+                padding: 0;
+                margin: 0;
+            }
+            .container{
+                display: flex;
+                justify-content: center;
+                width: 100vw;
+                height: 100vh;
+            }
+            .img img{
+                width: 100vw;
+                height: 100vh;
+                position: absolute;
+                z-index: -1;
+            }
             .login-form {
                 width: 340px;
                 margin: 50px auto;
@@ -44,6 +60,10 @@
         </style>
     </head>
     <body>
+        <div class="img">
+            <img src="https://cdn.pixabay.com/photo/2017/03/11/13/19/oilseed-rape-2135026_960_720.jpg">
+        </div>
+        <div class="container">
         <div class="login-form">
             <form action="usuario" method="post">
                 <input type="hidden" name="tipo" value="iniciarSesion" />
@@ -56,6 +76,14 @@
                     <!--input type="password" class="input" name="clave" required-->
                     <input type="password" class="form-control" name="clave" placeholder="Contraseña" required="required">
                 </div>
+                <div style="color:red; padding-top: 15px; font-size: 0.9rem;">
+                    <span>
+                        <% if (request.getAttribute("mensaje") != null) {%>
+                        <%=request.getAttribute("mensaje")%>
+                        <%}%>
+                    </span>
+                </div>
+
                 <div class="form-group">
                     <!--input type="submit" class="btn" value="Iniciar Sesión"-->
                     <button type="submit" class="btn btn-primary btn-block" value="Iniciar Sesión">Iniciar Sesión</button>
@@ -65,6 +93,7 @@
                     <a href="#" class="float-right">Forgot Password?</a>
                 </div-->        
             </form>            
+        </div>
         </div>
     </body>
 </html>
