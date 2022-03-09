@@ -102,9 +102,12 @@ public class ServletAppProperseed extends HttpServlet {
                 case "/cerrarSesion": //Ejecuta la edición de un cliente de la BD
                     cerrarSesion(request, response);
                     break;
-                default:
+                case "/list":
                     listDispositivos(request, response);
                     break;
+                /*default:
+                    listDispositivos(request, response);
+                    break;*/
             }
         } catch (SQLException ex) {
             throw new ServletException(ex);
@@ -158,7 +161,7 @@ public class ServletAppProperseed extends HttpServlet {
     }
 
     private void cerrarSesion(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        HttpSession sesion = request.getSession();
+        sesion = request.getSession();
         sesion.invalidate();
         request.setAttribute("mensaje", "");
         request.getRequestDispatcher("index.jsp").forward(request, response);
