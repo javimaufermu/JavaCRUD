@@ -75,7 +75,7 @@ public class RangoParametrosJpaController implements Serializable {
             List<Dispositivo> dispositivoListOld = persistentRangoParametros.getDispositivoList();
             List<Dispositivo> dispositivoListNew = rangoParametros.getDispositivoList();
             List<String> illegalOrphanMessages = null;
-            for (Dispositivo dispositivoListOldDispositivo : dispositivoListOld) {
+            /*for (Dispositivo dispositivoListOldDispositivo : dispositivoListOld) {
                 if (!dispositivoListNew.contains(dispositivoListOldDispositivo)) {
                     if (illegalOrphanMessages == null) {
                         illegalOrphanMessages = new ArrayList<String>();
@@ -92,9 +92,9 @@ public class RangoParametrosJpaController implements Serializable {
                 attachedDispositivoListNew.add(dispositivoListNewDispositivoToAttach);
             }
             dispositivoListNew = attachedDispositivoListNew;
-            rangoParametros.setDispositivoList(dispositivoListNew);
+            rangoParametros.setDispositivoList(dispositivoListNew);*/
             rangoParametros = em.merge(rangoParametros);
-            for (Dispositivo dispositivoListNewDispositivo : dispositivoListNew) {
+            /*for (Dispositivo dispositivoListNewDispositivo : dispositivoListNew) {
                 if (!dispositivoListOld.contains(dispositivoListNewDispositivo)) {
                     RangoParametros oldIdrangoOfDispositivoListNewDispositivo = dispositivoListNewDispositivo.getIdrango();
                     dispositivoListNewDispositivo.setIdrango(rangoParametros);
@@ -104,7 +104,7 @@ public class RangoParametrosJpaController implements Serializable {
                         oldIdrangoOfDispositivoListNewDispositivo = em.merge(oldIdrangoOfDispositivoListNewDispositivo);
                     }
                 }
-            }
+            }*/
             em.getTransaction().commit();
         } catch (Exception ex) {
             String msg = ex.getLocalizedMessage();

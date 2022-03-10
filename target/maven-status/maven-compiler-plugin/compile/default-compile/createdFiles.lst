@@ -2,6 +2,7 @@ edu\unicauca\apliweb\persistence\entities\Parametros_.class
 edu\unicauca\apliweb\persistence\entities\Alerta.class
 edu\unicauca\apliweb\persistence\jpa\DispositivoJpaController.class
 edu\unicauca\apliweb\persistence\jpa\RangoParametrosJpaController.class
+edu\unicauca\apliweb\control\ServletJavaCRUD.class
 edu\unicauca\apliweb\persistence\jpa\exceptions\PreexistingEntityException.class
 edu\unicauca\apliweb\persistence\entities\Alerta_.class
 edu\unicauca\apliweb\persistence\jpa\exceptions\IllegalOrphanException.class

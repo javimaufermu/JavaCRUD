@@ -23,6 +23,7 @@
                 </div>
                 <ul class="navbar-nav">
                     <li><a href="<%=request.getContextPath()%>/list" class="nav-link" style="color: white;">Lista Dispositivos</a></li>
+                    <li><a href="<%=request.getContextPath()%>/RangoParametros" class="nav-link" style="color: white;">Rango de Parámetros</a></li>
                 </ul>
                 <div class="text-end" style="margin-left: auto;">
                     <a class="navbar-brand fw-bold" style="color: white;"><c:out value="${usuario.nombres}" /></a>

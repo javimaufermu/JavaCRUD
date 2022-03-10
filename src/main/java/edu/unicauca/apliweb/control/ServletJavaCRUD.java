@@ -27,7 +27,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author natal
  */
-@WebServlet("/")
+//@WebServlet("/")
 public class ServletJavaCRUD extends HttpServlet {
 
   /**
